@@ -1,89 +1,172 @@
 <!doctype html>
-
 <html>
 
 <head>
-
-    <title>My File Portal</title>
+    <title>File Portal</title>
 
     <style>
-
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 60px auto;
+            max-width: 900px;
+            margin: 50px auto;
             padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            margin-top: 0;
         }
 
         .file {
-            border: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 15px;
             margin: 10px 0;
-            border-radius: 6px;
+            background: #f1f1f1;
+            border-radius: 8px;
         }
 
-        .download {
+        .info {
+            flex: 1;
+        }
+
+        .name {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .details {
+            color: #666;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        a,
+        button {
             display: inline-block;
-            padding: 8px 14px;
-            background: #2563eb;
-            color: white;
+            padding: 9px 14px;
+            margin-left: 5px;
+            border: 0;
+            border-radius: 6px;
             text-decoration: none;
-            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            background: #2563eb;
+        }
+
+        .delete {
+            background: #dc2626;
+        }
+
+        .delete-all {
+            background: #991b1b;
         }
 
         .logout {
-            display: inline-block;
-            margin-top: 20px;
-            color: #dc2626;
-            text-decoration: none;
+            background: #555;
         }
 
-    </style>
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
+        .empty {
+            color: #777;
+            padding: 20px 0;
+        }
+    </style>
 </head>
 
 <body>
 
-    <h1>My File Portal</h1>
+<div class="container">
+
+    <div class="top">
+        <h1>My File Portal</h1>
+
+        <a class="logout" href="/logout">
+            Logout
+        </a>
+    </div>
+
+    <hr>
 
     {% if files %}
 
-        <h2>Files</h2>
+        <h2>Uploaded Files</h2>
 
         {% for file in files %}
 
-            <div class="file">
+        <div class="file">
 
-                <strong>{{ file.name }}</strong>
+            <div class="info">
 
-                <p>
-                    Size:
-                    {{ file.size }} bytes
-                </p>
+                <div class="name">
+                    {{ file.name }}
+                </div>
 
-                <a
-                    class="download"
-                    href="/download/{{ file.name }}"
-                >
-                    Download
-                </a>
+                <div class="details">
+                    Size: {{ file.size }} bytes
+                    |
+                    Uploaded: {{ file.timestamp }}
+                </div>
 
             </div>
 
+            <div>
+
+                <a href="/download/{{ file.name }}">
+                    Download
+                </a>
+
+                <form
+                    action="/delete/{{ file.name }}"
+                    method="post"
+                    style="display:inline;"
+                    onsubmit="return confirm('Delete this file?');"
+                >
+                    <button class="delete" type="submit">
+                        Delete
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+
         {% endfor %}
+
+        <br>
+
+        <form
+            action="/delete-all"
+            method="post"
+            onsubmit="return confirm('DELETE ALL FILES? This cannot be undone.');"
+        >
+            <button class="delete-all" type="submit">
+                Delete All Files
+            </button>
+        </form>
 
     {% else %}
 
-        <p>No files uploaded yet.</p>
+        <p class="empty">
+            No files uploaded yet.
+        </p>
 
     {% endif %}
 
-    <a
-        class="logout"
-        href="/logout"
-    >
-        Logout
-    </a>
+</div>
 
 </body>
 
